@@ -1,9 +1,11 @@
 import { useState } from 'react';
 import Head from 'next/head';
 import {
-  Box, Button, Container, Grid, Stack, TextField, Typography, Select, MenuItem, InputLabel, FormControl, Table, TableBody, TableCell, TableContainer, TableHead, TableRow
+  Box, Button, Container, Grid, Stack, TextField, Typography, Select, MenuItem, InputLabel, FormControl, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Modal, Paper
 } from '@mui/material';
 import { Layout as DashboardLayout } from 'src/layouts/dashboard/layout';
+import FileCopyIcon from '@mui/icons-material/FileCopy';
+import CloseIcon from '@mui/icons-material/Close';
 
 const RuleForm = () => {
   const [formData, setFormData] = useState({
@@ -26,6 +28,9 @@ const RuleForm = () => {
 
   const [submittedData, setSubmittedData] = useState([]);
   const [editingIndex, setEditingIndex] = useState(-1);
+  const [uniqueIdCounter, setUniqueIdCounter] = useState(1); // Contador para IDs únicos
+  const [sqlSimulation, setSqlSimulation] = useState(''); // Estado para armazenar a simulação SQL
+  const [isSqlModalOpen, setIsSqlModalOpen] = useState(false); // Estado para controlar a abertura/fechamento do modal
 
   const handleChange = (event) => {
     setFormData({
@@ -38,7 +43,13 @@ const RuleForm = () => {
     event.preventDefault();
 
     if (editingIndex === -1) {
-      const newSubmittedData = [...submittedData, formData];
+      const newRule = {
+        ...formData,
+        id: uniqueIdCounter, // Definir um ID único
+      };
+      setUniqueIdCounter(uniqueIdCounter + 1);
+
+      const newSubmittedData = [...submittedData, newRule];
       setSubmittedData(newSubmittedData);
     } else {
       const updatedData = [...submittedData];
@@ -73,124 +84,159 @@ const RuleForm = () => {
     setSubmittedData(updatedData);
   };
 
+  const handleShowSQL = (index) => {
+    // Verifique se o índice está dentro dos limites do array
+    if (index >= 0 && index < submittedData.length) {
+      // Implementação da simulação de SQL com base nos dados do índice
+      const data = submittedData[index];
+      const sql = `SELECT * FROM tabela WHERE user = '${data.user}' AND zone = '${data.zone}'`; // Adicione outras condições conforme necessário
+      setSqlSimulation(sql);
+      setIsSqlModalOpen(true);
+    }
+  };
+  
+
+  const handleCloseSqlModal = () => {
+    setIsSqlModalOpen(false);
+  };
+
   return (
     <>
       <Head>
         <title>Cadastro de Regras</title>
       </Head>
       <Box component="main" sx={{ flexGrow: 1, py: 8 }}>
-        <Container maxWidth="md">
-          <Grid container spacing={3}>
-            <Grid item xs={12} sm={6}>
-              <Stack spacing={3}>
-                <Typography variant="h4">Cadastro de Regras</Typography>
-                <form onSubmit={handleSubmit}>
-                  <Stack spacing={3}>
-                    {/* Campos do formulário */}
-                    <TextField
-                      fullWidth
-                      label="User"
-                      name="user"
+        <Container maxWidth="md-2">
+          <Typography variant="h4" align="center">
+            Create a new rule
+          </Typography>
+          <br/>
+          <form onSubmit={handleSubmit}>
+            <Grid container spacing={3}>
+              {/* Campos do formulário */}
+              <Grid item xs={12} sm={6}>
+                <Stack spacing={3}>
+                  <TextField
+                    fullWidth
+                    label="User"
+                    name="user"
+                    onChange={handleChange}
+                    value={formData.user}
+                    variant="outlined"
+                  />
+                  <TextField
+                    fullWidth
+                    label="Zone"
+                    name="zone"
+                    onChange={handleChange}
+                    value={formData.zone}
+                    variant="outlined"
+                  />
+                  <FormControl fullWidth variant="outlined">
+                    <InputLabel>Country</InputLabel>
+                    <Select
+                      label="Country"
+                      name="country"
                       onChange={handleChange}
-                      value={formData.user}
-                      variant="outlined"
-                    />
-                    <TextField
-                      fullWidth
-                      label="Zone"
-                      name="zone"
-                      onChange={handleChange}
-                      value={formData.zone}
-                      variant="outlined"
-                    />
-                    
-                    <FormControl fullWidth variant="outlined">
-                      <InputLabel>Country</InputLabel>
-                      <Select
-                        label="Country"
-                        name="country"
-                        onChange={handleChange}
-                        value={formData.country}
-                      >
-                        <MenuItem value={"US"}>US</MenuItem>
-                        <MenuItem value={"BR"}>BR</MenuItem>
-                        {/* Adicione outros países conforme necessário */}
-                      </Select>
-                    </FormControl>
-                    <TextField
-                      fullWidth
-                      label="Date"
-                      name="date"
-                      type="date"
-                      onChange={handleChange}
-                      value={formData.date}
-                      variant="outlined"
-                      InputLabelProps={{
-                        shrink: true,
-                      }}
-                    />
-                    <TextField
-  fullWidth
-  label="Novo Campo 1"
-  name="newField1"
-  onChange={handleChange}
-  value={formData.newField1}
-  variant="outlined"
-/>
-  <TextField
-    fullWidth
-    label="Novo Campo 2"
-    name="newField2"
-    onChange={handleChange}
-    value={formData.newField2}
-    variant="outlined"
-  />
-  <TextField
-    fullWidth
-    label="Novo Campo 3"
-    name="newField3"
-    onChange={handleChange}
-    value={formData.newField3}
-    variant="outlined"
-  />
-  <TextField
-    fullWidth
-    label="Novo Campo 4"
-    name="newField4"
-    onChange={handleChange}
-    value={formData.newField4}
-    variant="outlined"
-  />
-  <TextField
-    fullWidth
-    label="Novo Campo 5"
-    name="newField5"
-    onChange={handleChange}
-    value={formData.newField5}
-    variant="outlined"
-  />
-                    <Button color="primary" type="submit" variant="contained">
-                      {editingIndex === -1 ? 'Cadastrar Regra' : 'Atualizar Regra'}
-                    </Button>
-                  </Stack>
-                </form>
-              </Stack>
+                      value={formData.country}
+                    >
+                      <MenuItem value={"US"}>US</MenuItem>
+                      <MenuItem value={"BR"}>BR</MenuItem>
+                      {/* Adicione outros países conforme necessário */}
+                    </Select>
+                  </FormControl>
+                  <TextField
+                    fullWidth
+                    label="Date"
+                    name="date"
+                    type="date"
+                    onChange={handleChange}
+                    value={formData.date}
+                    variant="outlined"
+                    InputLabelProps={{
+                      shrink: true,
+                    }}
+                  />
+                   <Button
+                    color="primary"
+                    type="submit"
+                    variant="contained"
+                    sx={{ display: 'block', margin: '0 auto' }}
+                  >
+                    {editingIndex === -1 ? 'Save' : 'Atualizar Regra'}
+                  </Button>
+                </Stack>
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <Stack spacing={3}>
+
+                  <TextField
+                    fullWidth
+                    label="Collun Name"
+                    name="newField1"
+                    onChange={handleChange}
+                    value={formData.newField1}
+                    variant="outlined"
+                  />
+                  <TextField
+                    fullWidth
+                    label="Value"
+                    name="newField2"
+                    onChange={handleChange}
+                    value={formData.newField2}
+                    variant="outlined"
+                  />
+                  <TextField
+                    fullWidth
+                    label="Logic"
+                    name="newField3"
+                    onChange={handleChange}
+                    value={formData.newField3}
+                    variant="outlined"
+                  />
+                  <TextField
+                    fullWidth
+                    label="Output Value"
+                    name="newField4"
+                    onChange={handleChange}
+                    value={formData.newField4}
+                    variant="outlined"
+                  />
+                  {/* <TextField
+                    fullWidth
+                    label="Description"
+                    name="newField5"
+                    onChange={handleChange}
+                    value={formData.newField5}
+                    variant="outlined"
+                  /> */}
+                  {/* <Button
+                    color="secondary"
+                    variant="contained"
+                    sx={{ display: 'block', margin: '0 auto' }}
+                    onClick={() => handleShowSQL(editingIndex)}
+                  >
+                    Show SQL
+                  </Button> */}
+                </Stack>
+              </Grid>
             </Grid>
-          </Grid>
+          </form>
           <Box mt={10}>
             {submittedData.length > 0 && (
               <div>
-                <Typography variant="h5">Dados Cadastrados:</Typography>
+                <Typography variant="h5">Rule List:</Typography>
                 <TableContainer>
                   <Table>
                     <TableHead>
                       <TableRow>
+                        <TableCell>ID</TableCell>
                         <TableCell>User</TableCell>
                         <TableCell>Zone</TableCell>
                         <TableCell>Country</TableCell>
                         <TableCell>Date</TableCell>
-                        <TableCell>Operator</TableCell>
-                        <TableCell>Values</TableCell>
+                        <TableCell>Collun_Name</TableCell>
+                        <TableCell>VALUE</TableCell>
                         <TableCell>Logic</TableCell>
                         <TableCell>Output Value</TableCell>
                         <TableCell>Ações</TableCell>
@@ -199,6 +245,7 @@ const RuleForm = () => {
                     <TableBody>
                       {submittedData.map((data, index) => (
                         <TableRow key={index}>
+                          <TableCell>{data.id}</TableCell>
                           <TableCell>{data.user}</TableCell>
                           <TableCell>{data.zone}</TableCell>
                           <TableCell>{data.country}</TableCell>
@@ -208,21 +255,31 @@ const RuleForm = () => {
                           <TableCell>{data.logic}</TableCell>
                           <TableCell>{data.outputValue}</TableCell>
                           <TableCell>
-                            <Button
-                              color="primary"
-                              variant="contained"
-                              onClick={() => handleEdit(index)}
-                            >
-                              Editar
-                            </Button>
-                            <Button
-                              color="secondary"
-                              variant="contained"
-                              onClick={() => handleDelete(index)}
-                            >
-                              Excluir
-                            </Button>
-                          </TableCell>
+  <Stack direction="row" spacing={1}>
+    <Button
+      color="primary"
+      variant="contained"
+      onClick={() => handleShowSQL(index)}
+    >
+      Show SQL
+    </Button>
+    <Button
+      color="primary"
+      variant="contained"
+      onClick={() => handleEdit(index)}
+    >
+      Editar
+    </Button>
+    <Button
+      color="secondary"
+      variant="contained"
+      onClick={() => handleDelete(index)}
+    >
+      Excluir
+    </Button>
+  </Stack>
+</TableCell>
+
                         </TableRow>
                       ))}
                     </TableBody>
@@ -233,6 +290,25 @@ const RuleForm = () => {
           </Box>
         </Container>
       </Box>
+
+      {/* Modal para exibir a simulação de SQL */}
+      <Modal
+        open={isSqlModalOpen}
+        onClose={handleCloseSqlModal}
+        aria-labelledby="modal-title"
+        aria-describedby="modal-description"
+      >
+        <Box sx={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)' }}>
+          <Paper elevation={3} sx={{ padding: '2rem' }}>
+            <Typography variant="h6" id="modal-title">
+              SQL Simulation
+            </Typography>
+            <Typography variant="body2" id="modal-description">
+              {sqlSimulation}
+            </Typography>
+          </Paper>
+        </Box>
+      </Modal>
     </>
   );
 };
