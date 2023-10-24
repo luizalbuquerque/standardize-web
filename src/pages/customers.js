@@ -206,7 +206,7 @@ const Page = () => {
     <>
       <Head>
         <title>
-          Customers | Devias Kit
+          Rules
         </title>
       </Head>
       <Box

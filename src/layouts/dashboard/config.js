@@ -19,7 +19,7 @@ export const items = [
     )
   },
   {
-    title: 'All Rules',
+    title: 'Rules',
     path: '/customers',
     icon: (
       <SvgIcon fontSize="small">
@@ -30,6 +30,15 @@ export const items = [
   {
     title: 'Standardize Advanced',
     path: '/rule-form',
+    icon: (
+      <SvgIcon fontSize="small">
+        <UsersIcon />
+      </SvgIcon>
+    )
+  },
+  {
+    title: 'Standardize Basic',
+    path: '/rule-form-basic',
     icon: (
       <SvgIcon fontSize="small">
         <UsersIcon />
