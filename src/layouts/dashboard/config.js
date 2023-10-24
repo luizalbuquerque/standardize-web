@@ -28,7 +28,7 @@ export const items = [
     )
   },
   {
-    title: 'Add new Rules',
+    title: 'Standardize Advanced',
     path: '/rule-form',
     icon: (
       <SvgIcon fontSize="small">

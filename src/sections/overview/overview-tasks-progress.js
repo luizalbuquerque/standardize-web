@@ -29,7 +29,7 @@ export const OverviewTasksProgress = (props) => {
               gutterBottom
               variant="overline"
             >
-              Task Progress
+              Rules in Progress
             </Typography>
             <Typography variant="h4">
               {value}%

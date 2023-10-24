@@ -14,7 +14,7 @@ export const OverviewTotalProfit = (props) => {
           justifyContent="space-between"
           spacing={3}
         >
-          <Stack spacing={1}>
+          {/* <Stack spacing={1}>
             <Typography
               color="text.secondary"
               variant="overline"
@@ -24,8 +24,8 @@ export const OverviewTotalProfit = (props) => {
             <Typography variant="h4">
               {value}
             </Typography>
-          </Stack>
-          <Avatar
+          </Stack> */}
+          {/* <Avatar
             sx={{
               backgroundColor: 'primary.main',
               height: 56,
@@ -35,7 +35,7 @@ export const OverviewTotalProfit = (props) => {
             <SvgIcon>
               <CurrencyDollarIcon />
             </SvgIcon>
-          </Avatar>
+          </Avatar> */}
         </Stack>
       </CardContent>
     </Card>

@@ -21,10 +21,10 @@ export const OverviewTotalCustomers = (props) => {
               color="text.secondary"
               variant="overline"
             >
-              Total Customers
+              Total Users
             </Typography>
             <Typography variant="h4">
-              {value}
+              {30}
             </Typography>
           </Stack>
           <Avatar
@@ -55,7 +55,7 @@ export const OverviewTotalCustomers = (props) => {
                 color={positive ? 'success' : 'error'}
                 fontSize="small"
               >
-                {positive ? <ArrowUpIcon /> : <ArrowDownIcon />}
+                {positive ? <ArrowUpIcon /> : <ArrowUpIcon />}
               </SvgIcon>
               <Typography
                 color={positive ? 'success.main' : 'error.main'}
