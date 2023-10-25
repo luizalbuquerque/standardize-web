@@ -61,7 +61,7 @@ const RuleForm = () => {
     }
   };
 
-  const handleClearAll = () => {
+  const clearFields = () => {
     setFormData({
       user: 'ABI_user',
       zone: '',
@@ -100,18 +100,7 @@ const RuleForm = () => {
       setEditingIndex(-1);
     }
 
-    setFormData({
-      user: 'ABI_user',
-      zone: '',
-      country: '',
-      date: new Date().toISOString().slice(0, 10),
-      columnName: '',
-      operator: '',
-      values: '',
-      columnNameOutput: '',
-      logic: 'AND',
-      outputValue: ''
-    });
+    clearFields();
   };
 
   const handleEdit = (index) => {
@@ -243,6 +232,14 @@ const RuleForm = () => {
                     }}
                   />
                    <Button
+                    color="inherit"
+                    type="submit"
+                    variant="contained"
+                    sx={{ display: 'block', margin: '0 auto' }}
+                  >
+                    {editingIndex === -1 ? 'Validate Rule' : 'Validate Rule'}
+                  </Button>
+                   <Button
                     color="primary"
                     type="submit"
                     variant="contained"
@@ -253,7 +250,7 @@ const RuleForm = () => {
                   <Button
                     color="inherit"
                     variant="contained"
-                    onClick={handleClearAll}
+                    onClick={clearFields}
                     sx={{ display: 'block', margin: '0 auto' }}
                   >
                     Clear All
@@ -261,10 +258,10 @@ const RuleForm = () => {
                   <Button
                     color="success"
                     variant="contained"
-                    onClick={handleClearAll}
+                    onClick={clearFields}
                     sx={{ display: 'block', margin: '0 auto' }}
                   >
-                    Save Rules
+                    Save all Rules
                   </Button>
                   <input
                     type="file"
@@ -288,7 +285,7 @@ const RuleForm = () => {
                   />
                   <TextField
                     fullWidth
-                    label="Value"
+                    label="Operator"
                     name="newField2"
                     onChange={handleChange}
                     value={formData.newField2}
@@ -296,7 +293,7 @@ const RuleForm = () => {
                   />
                   <TextField
                     fullWidth
-                    label="Logic"
+                    label="Values"
                     name="newField3"
                     onChange={handleChange}
                     value={formData.newField3}
@@ -304,10 +301,18 @@ const RuleForm = () => {
                   />
                   <TextField
                     fullWidth
-                    label="Output Value"
+                    label="Logic"
                     name="newField4"
                     onChange={handleChange}
                     value={formData.newField4}
+                    variant="outlined"
+                  />
+                  <TextField
+                    fullWidth
+                    label="Output Value"
+                    name="newField5"
+                    onChange={handleChange}
+                    value={formData.newField5}
                     variant="outlined"
                   />
                    {/* <Button
@@ -336,10 +341,11 @@ const RuleForm = () => {
                         <TableCell>Date</TableCell>
                         <TableCell>Updated</TableCell>
                         <TableCell>Collun_Name</TableCell>
-                        <TableCell>VALUE</TableCell>
+                        <TableCell>Operator</TableCell>
+                        <TableCell>Values</TableCell>
                         <TableCell>Logic</TableCell>
                         <TableCell>Output Value</TableCell>
-                        <TableCell>Ações</TableCell>
+                        <TableCell>Actions</TableCell>
                       </TableRow>
                     </TableHead>
                     <TableBody>
@@ -351,6 +357,7 @@ const RuleForm = () => {
                           <TableCell>{data.country}</TableCell>
                           <TableCell>{data.date}</TableCell>
                           <TableCell>{data.date}</TableCell>
+                          <TableCell>{data.collun}</TableCell>
                           <TableCell>{data.operator}</TableCell>
                           <TableCell>{data.values}</TableCell>
                           <TableCell>{data.logic}</TableCell>
