@@ -1,11 +1,11 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import Head from 'next/head';
+import ArrowUpOnSquareIcon from '@mui/icons-material/ArrowUpward'; // Certifique-se de que a importação do ícone está correta
+
 import {
   Box, Button, Container, Grid, Stack, TextField, Typography, Select, MenuItem, InputLabel, FormControl, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Modal, Paper
 } from '@mui/material';
 import { Layout as DashboardLayout } from 'src/layouts/dashboard/layout';
-import FileCopyIcon from '@mui/icons-material/FileCopy';
-import CloseIcon from '@mui/icons-material/Close';
 
 const RuleForm = () => {
   const [formData, setFormData] = useState({
@@ -36,6 +36,48 @@ const RuleForm = () => {
     setFormData({
       ...formData,
       [event.target.name]: event.target.value,
+    });
+  };
+
+  const fileInputRef = useRef(null);
+
+  const handleFileUpload = (event) => {
+    const file = event.target.files[0];
+    if (file) {
+      // Realize a validação do arquivo aqui, por exemplo, verifique a extensão, tamanho, etc.
+      if (file.name.endsWith('.csv') || file.name.endsWith('.txt')) {
+        // Faça algo com o arquivo válido, como lê-lo e processá-lo
+        // Para leitura de arquivo, você pode usar a API FileReader
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          const fileContents = e.target.result;
+          // Agora você pode processar o conteúdo do arquivo, por exemplo, analisar um arquivo CSV
+          // Certifique-se de implementar a lógica de análise adequada para o seu caso de uso
+        };
+        reader.readAsText(file);
+      } else {
+        alert('Por favor, selecione um arquivo CSV ou TXT válido.');
+      }
+    }
+  };
+
+  const handleClearAll = () => {
+    setFormData({
+      user: 'ABI_user',
+      zone: '',
+      country: '',
+      date: new Date().toISOString().slice(0, 10),
+      columnName: '',
+      operator: '',
+      values: '',
+      columnNameOutput: '',
+      logic: 'AND',
+      outputValue: '',
+      newField1: '', // Novo campo 1
+      newField2: '', // Novo campo 2
+      newField3: '', // Novo campo 3
+      newField4: '', // Novo campo 4
+      newField5: '' // Novo campo 5
     });
   };
 
@@ -94,7 +136,6 @@ const RuleForm = () => {
       setIsSqlModalOpen(true);
     }
   };
-  
 
   const handleCloseSqlModal = () => {
     setIsSqlModalOpen(false);
@@ -103,7 +144,7 @@ const RuleForm = () => {
   return (
     <>
       <Head>
-        <title>Cadastro de Regras</title>
+        <title>Create a new rule</title>
       </Head>
       <Box component="main" sx={{ flexGrow: 1, py: 8 }}>
         <Container maxWidth="md-2">
@@ -111,6 +152,22 @@ const RuleForm = () => {
             Create a new rule
           </Typography>
           <br/>
+          <br/>
+          
+          <Button
+            color="inherit"
+            variant="contained"
+            onClick={() => fileInputRef.current.click()}
+            startIcon={<ArrowUpOnSquareIcon fontSize="small" />}
+          >
+            Import File of Rules
+          </Button>
+          
+          <br/>
+          <br/>
+          <br/>
+          <br/>
+
           <form onSubmit={handleSubmit}>
             <Grid container spacing={3}>
               {/* Campos do formulário */}
@@ -124,14 +181,31 @@ const RuleForm = () => {
                     value={formData.user}
                     variant="outlined"
                   />
-                  <TextField
+                  {/* <TextField
                     fullWidth
                     label="Zone"
                     name="zone"
                     onChange={handleChange}
                     value={formData.zone}
                     variant="outlined"
-                  />
+                  /> */}
+                   <FormControl fullWidth variant="outlined">
+                    <InputLabel>ZONE</InputLabel>
+                    <Select
+                      label="Zone"
+                      name="zone"
+                      onChange={handleChange}
+                      value={formData.zone}
+                      variant="outlined"
+                    >
+                      <MenuItem value={"NAZ"}>NAZ</MenuItem>
+                      <MenuItem value={"SAZ"}>SAZ</MenuItem>
+                      <MenuItem value={"MIDAM"}>MIDAM</MenuItem>
+                      <MenuItem value={"EUR"}>EUR</MenuItem>
+                      <MenuItem value={"AFRICA"}>AFRICA</MenuItem>
+                      <MenuItem value={"APAC"}>APAC</MenuItem>
+                    </Select>
+                  </FormControl>
                   <FormControl fullWidth variant="outlined">
                     <InputLabel>Country</InputLabel>
                     <Select
@@ -139,9 +213,20 @@ const RuleForm = () => {
                       name="country"
                       onChange={handleChange}
                       value={formData.country}
+                      variant="outlined"
                     >
-                      <MenuItem value={"US"}>US</MenuItem>
-                      <MenuItem value={"BR"}>BR</MenuItem>
+                      <MenuItem value={"US"}>United States</MenuItem>
+                      <MenuItem value={"BR"}>Brazil</MenuItem>
+                      <MenuItem value={"CA"}>Canada</MenuItem>
+                      <MenuItem value={"UK"}>United Kingdom</MenuItem>
+                      <MenuItem value={"AU"}>Australia</MenuItem>
+                      <MenuItem value={"DE"}>Germany</MenuItem>
+                      <MenuItem value={"FR"}>France</MenuItem>
+                      <MenuItem value={"JP"}>Japan</MenuItem>
+                      <MenuItem value={"IN"}>India</MenuItem>
+                      <MenuItem value={"MX"}>Mexico</MenuItem>
+                      <MenuItem value={"CN"}>China</MenuItem>
+                      <MenuItem value={"RU"}>Russia</MenuItem>
                       {/* Adicione outros países conforme necessário */}
                     </Select>
                   </FormControl>
@@ -163,13 +248,36 @@ const RuleForm = () => {
                     variant="contained"
                     sx={{ display: 'block', margin: '0 auto' }}
                   >
-                    {editingIndex === -1 ? 'Save' : 'Atualizar Regra'}
+                    {editingIndex === -1 ? 'ADD Rule' : 'Atualizar Regra'}
                   </Button>
+                  <Button
+                    color="inherit"
+                    variant="contained"
+                    onClick={handleClearAll}
+                    sx={{ display: 'block', margin: '0 auto' }}
+                  >
+                    Clear All
+                  </Button>
+                  <Button
+                    color="success"
+                    variant="contained"
+                    onClick={handleClearAll}
+                    sx={{ display: 'block', margin: '0 auto' }}
+                  >
+                    Save Rules
+                  </Button>
+                  <input
+                    type="file"
+                    accept=".csv, .txt"
+                    onChange={handleFileUpload}
+                    style={{ display: 'none' }}
+                    ref={fileInputRef}
+                  />
+                 
                 </Stack>
               </Grid>
               <Grid item xs={12} sm={6}>
                 <Stack spacing={3}>
-
                   <TextField
                     fullWidth
                     label="Collun Name"
@@ -202,21 +310,12 @@ const RuleForm = () => {
                     value={formData.newField4}
                     variant="outlined"
                   />
-                  {/* <TextField
-                    fullWidth
-                    label="Description"
-                    name="newField5"
-                    onChange={handleChange}
-                    value={formData.newField5}
-                    variant="outlined"
-                  /> */}
-                  {/* <Button
-                    color="secondary"
+                   {/* <Button
                     variant="contained"
-                    sx={{ display: 'block', margin: '0 auto' }}
-                    onClick={() => handleShowSQL(editingIndex)}
+                    color="secondary"
+                    onClick={() => fileInputRef.current.click()}
                   >
-                    Show SQL
+                    Importar Arquivo
                   </Button> */}
                 </Stack>
               </Grid>
@@ -235,6 +334,7 @@ const RuleForm = () => {
                         <TableCell>Zone</TableCell>
                         <TableCell>Country</TableCell>
                         <TableCell>Date</TableCell>
+                        <TableCell>Updated</TableCell>
                         <TableCell>Collun_Name</TableCell>
                         <TableCell>VALUE</TableCell>
                         <TableCell>Logic</TableCell>
@@ -250,36 +350,36 @@ const RuleForm = () => {
                           <TableCell>{data.zone}</TableCell>
                           <TableCell>{data.country}</TableCell>
                           <TableCell>{data.date}</TableCell>
+                          <TableCell>{data.date}</TableCell>
                           <TableCell>{data.operator}</TableCell>
                           <TableCell>{data.values}</TableCell>
                           <TableCell>{data.logic}</TableCell>
                           <TableCell>{data.outputValue}</TableCell>
                           <TableCell>
-  <Stack direction="row" spacing={1}>
-    <Button
-      color="primary"
-      variant="contained"
-      onClick={() => handleShowSQL(index)}
-    >
-      Show SQL
-    </Button>
-    <Button
-      color="primary"
-      variant="contained"
-      onClick={() => handleEdit(index)}
-    >
-      Editar
-    </Button>
-    <Button
-      color="secondary"
-      variant="contained"
-      onClick={() => handleDelete(index)}
-    >
-      Excluir
-    </Button>
-  </Stack>
-</TableCell>
-
+                            <Stack direction="row" spacing={1}>
+                              <Button
+                                color="primary"
+                                variant="contained"
+                                onClick={() => handleShowSQL(index)}
+                              >
+                                Show SQL
+                              </Button>
+                              <Button
+                                color="primary"
+                                variant="contained"
+                                onClick={() => handleEdit(index)}
+                              >
+                                Editar
+                              </Button>
+                              <Button
+                                color="secondary"
+                                variant="contained"
+                                onClick={() => handleDelete(index)}
+                              >
+                                Excluir
+                              </Button>
+                            </Stack>
+                          </TableCell>
                         </TableRow>
                       ))}
                     </TableBody>
