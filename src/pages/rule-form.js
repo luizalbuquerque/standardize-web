@@ -7,6 +7,14 @@ import {
 } from '@mui/material';
 import { Layout as DashboardLayout } from 'src/layouts/dashboard/layout';
 
+import CloseIcon from '@mui/icons-material/Close';
+import ContentCopyIcon from '@mui/icons-material/ContentCopy';
+import IconButton from '@mui/material/IconButton';
+import LinearProgress from '@mui/material/LinearProgress';
+
+
+
+
 const RuleForm = () => {
   const [formData, setFormData] = useState({
     user: 'ABI_user',
@@ -19,11 +27,11 @@ const RuleForm = () => {
     columnNameOutput: '',
     logic: 'AND',
     outputValue: '',
-    newField1: '', // Novo campo 1
-    newField2: '', // Novo campo 2
-    newField3: '', // Novo campo 3
-    newField4: '', // Novo campo 4
-    newField5: '' // Novo campo 5
+    collunName: '', // Novo campo 1
+    operator: '', // Novo campo 2
+    values: '', // Novo campo 3
+    logic: '', // Novo campo 4
+    outputValue: '' // Novo campo 5
   });
 
   const [submittedData, setSubmittedData] = useState([]);
@@ -31,6 +39,8 @@ const RuleForm = () => {
   const [uniqueIdCounter, setUniqueIdCounter] = useState(1); // Contador para IDs únicos
   const [sqlSimulation, setSqlSimulation] = useState(''); // Estado para armazenar a simulação SQL
   const [isSqlModalOpen, setIsSqlModalOpen] = useState(false); // Estado para controlar a abertura/fechamento do modal
+  const [isProgressModalOpen, setIsProgressModalOpen] = useState(false);
+  const [progress, setProgress] = useState(0);
 
   const handleChange = (event) => {
     setFormData({
@@ -39,20 +49,23 @@ const RuleForm = () => {
     });
   };
 
+  // Função para copiar SQL para a área de transferência
+  const handleCopiarSql = () => {
+    navigator.clipboard.writeText(simulacaoSql).then(() => {
+      alert("SQL copiado para a área de transferência!");
+      setOpenModal(false);
+    });
+  };
+
   const fileInputRef = useRef(null);
 
   const handleFileUpload = (event) => {
     const file = event.target.files[0];
     if (file) {
-      // Realize a validação do arquivo aqui, por exemplo, verifique a extensão, tamanho, etc.
       if (file.name.endsWith('.csv') || file.name.endsWith('.txt')) {
-        // Faça algo com o arquivo válido, como lê-lo e processá-lo
-        // Para leitura de arquivo, você pode usar a API FileReader
         const reader = new FileReader();
         reader.onload = (e) => {
           const fileContents = e.target.result;
-          // Agora você pode processar o conteúdo do arquivo, por exemplo, analisar um arquivo CSV
-          // Certifique-se de implementar a lógica de análise adequada para o seu caso de uso
         };
         reader.readAsText(file);
       } else {
@@ -73,11 +86,11 @@ const RuleForm = () => {
       columnNameOutput: '',
       logic: 'AND',
       outputValue: '',
-      newField1: '', // Novo campo 1
-      newField2: '', // Novo campo 2
-      newField3: '', // Novo campo 3
-      newField4: '', // Novo campo 4
-      newField5: '' // Novo campo 5
+      collunName: '',
+      operator: '',
+      values: '',
+      logic: '',
+      outputValue: ''
     });
   };
 
@@ -116,11 +129,9 @@ const RuleForm = () => {
   };
 
   const handleShowSQL = (index) => {
-    // Verifique se o índice está dentro dos limites do array
     if (index >= 0 && index < submittedData.length) {
-      // Implementação da simulação de SQL com base nos dados do índice
       const data = submittedData[index];
-      const sql = `SELECT * FROM tabela WHERE user = '${data.user}' AND zone = '${data.zone}'`; // Adicione outras condições conforme necessário
+      const sql = `SELECT * FROM tabela WHERE user = '${data.user}' AND zone = '${data.zone}'`;
       setSqlSimulation(sql);
       setIsSqlModalOpen(true);
     }
@@ -129,6 +140,28 @@ const RuleForm = () => {
   const handleCloseSqlModal = () => {
     setIsSqlModalOpen(false);
   };
+
+  const handleSaveRules = () => {
+    setIsProgressModalOpen(true);
+    setProgress(0);
+
+
+
+    const interval = setInterval(() => {
+      setProgress((prevProgress) => {
+        const newProgress = prevProgress + 20;
+        if (newProgress === 100) {
+          clearInterval(interval);
+          setTimeout(() => {
+            setIsProgressModalOpen(false);
+            setProgress(0);
+          }, 1000);
+        }
+        return newProgress;
+      });
+    }, 1000);
+  };
+
 
   return (
     <>
@@ -140,9 +173,8 @@ const RuleForm = () => {
           <Typography variant="h4" align="center">
             Create a new rule
           </Typography>
-          <br/>
-          <br/>
-          
+          <br />
+          <br />
           <Button
             color="inherit"
             variant="contained"
@@ -151,11 +183,19 @@ const RuleForm = () => {
           >
             Import File of Rules
           </Button>
-          
-          <br/>
-          <br/>
-          <br/>
-          <br/>
+
+          <Button
+                    color="info"
+                    type="submit"
+                    variant="contained"
+                    
+                    sx={{ display: 'block', margin: '0 auto' }}
+                  >
+                    {editingIndex === -1 ? 'Validate Rule' : 'Validate Rule'}
+                  </Button>
+
+          <br />
+          <br />
 
           <form onSubmit={handleSubmit}>
             <Grid container spacing={3}>
@@ -170,15 +210,7 @@ const RuleForm = () => {
                     value={formData.user}
                     variant="outlined"
                   />
-                  {/* <TextField
-                    fullWidth
-                    label="Zone"
-                    name="zone"
-                    onChange={handleChange}
-                    value={formData.zone}
-                    variant="outlined"
-                  /> */}
-                   <FormControl fullWidth variant="outlined">
+                  <FormControl fullWidth variant="outlined">
                     <InputLabel>ZONE</InputLabel>
                     <Select
                       label="Zone"
@@ -216,7 +248,6 @@ const RuleForm = () => {
                       <MenuItem value={"MX"}>Mexico</MenuItem>
                       <MenuItem value={"CN"}>China</MenuItem>
                       <MenuItem value={"RU"}>Russia</MenuItem>
-                      {/* Adicione outros países conforme necessário */}
                     </Select>
                   </FormControl>
                   <TextField
@@ -231,15 +262,15 @@ const RuleForm = () => {
                       shrink: true,
                     }}
                   />
-                   <Button
+                  {/* <Button
                     color="inherit"
                     type="submit"
                     variant="contained"
                     sx={{ display: 'block', margin: '0 auto' }}
                   >
                     {editingIndex === -1 ? 'Validate Rule' : 'Validate Rule'}
-                  </Button>
-                   <Button
+                  </Button> */}
+                  <Button
                     color="primary"
                     type="submit"
                     variant="contained"
@@ -258,7 +289,7 @@ const RuleForm = () => {
                   <Button
                     color="success"
                     variant="contained"
-                    onClick={clearFields}
+                    onClick={handleSaveRules}
                     sx={{ display: 'block', margin: '0 auto' }}
                   >
                     Save all Rules
@@ -270,7 +301,7 @@ const RuleForm = () => {
                     style={{ display: 'none' }}
                     ref={fileInputRef}
                   />
-                 
+
                 </Stack>
               </Grid>
               <Grid item xs={12} sm={6}>
@@ -278,50 +309,43 @@ const RuleForm = () => {
                   <TextField
                     fullWidth
                     label="Collun Name"
-                    name="newField1"
+                    name="collunName"
                     onChange={handleChange}
-                    value={formData.newField1}
+                    value={formData.collunName}
                     variant="outlined"
                   />
                   <TextField
                     fullWidth
                     label="Operator"
-                    name="newField2"
+                    name="operator"
                     onChange={handleChange}
-                    value={formData.newField2}
+                    value={formData.operator}
                     variant="outlined"
                   />
                   <TextField
                     fullWidth
                     label="Values"
-                    name="newField3"
+                    name="values"
                     onChange={handleChange}
-                    value={formData.newField3}
+                    value={formData.values}
                     variant="outlined"
                   />
                   <TextField
                     fullWidth
                     label="Logic"
-                    name="newField4"
+                    name="logic"
                     onChange={handleChange}
-                    value={formData.newField4}
+                    value={formData.logic}
                     variant="outlined"
                   />
                   <TextField
                     fullWidth
                     label="Output Value"
-                    name="newField5"
+                    name="outputValue"
                     onChange={handleChange}
-                    value={formData.newField5}
+                    value={formData.outputValue}
                     variant="outlined"
                   />
-                   {/* <Button
-                    variant="contained"
-                    color="secondary"
-                    onClick={() => fileInputRef.current.click()}
-                  >
-                    Importar Arquivo
-                  </Button> */}
                 </Stack>
               </Grid>
             </Grid>
@@ -338,8 +362,7 @@ const RuleForm = () => {
                         <TableCell>User</TableCell>
                         <TableCell>Zone</TableCell>
                         <TableCell>Country</TableCell>
-                        <TableCell>Date</TableCell>
-                        <TableCell>Updated</TableCell>
+                        <TableCell>Created At</TableCell>
                         <TableCell>Collun_Name</TableCell>
                         <TableCell>Operator</TableCell>
                         <TableCell>Values</TableCell>
@@ -356,8 +379,7 @@ const RuleForm = () => {
                           <TableCell>{data.zone}</TableCell>
                           <TableCell>{data.country}</TableCell>
                           <TableCell>{data.date}</TableCell>
-                          <TableCell>{data.date}</TableCell>
-                          <TableCell>{data.collun}</TableCell>
+                          <TableCell>{data.collunName}</TableCell>
                           <TableCell>{data.operator}</TableCell>
                           <TableCell>{data.values}</TableCell>
                           <TableCell>{data.logic}</TableCell>
@@ -365,21 +387,21 @@ const RuleForm = () => {
                           <TableCell>
                             <Stack direction="row" spacing={1}>
                               <Button
-                                color="primary"
+                                color="info"
                                 variant="contained"
                                 onClick={() => handleShowSQL(index)}
                               >
                                 Show SQL
                               </Button>
                               <Button
-                                color="primary"
+                                color="warning"
                                 variant="contained"
                                 onClick={() => handleEdit(index)}
                               >
                                 Editar
                               </Button>
                               <Button
-                                color="secondary"
+                                color="error"
                                 variant="contained"
                                 onClick={() => handleDelete(index)}
                               >
@@ -398,24 +420,58 @@ const RuleForm = () => {
         </Container>
       </Box>
 
-      {/* Modal para exibir a simulação de SQL */}
       <Modal
         open={isSqlModalOpen}
         onClose={handleCloseSqlModal}
         aria-labelledby="modal-title"
         aria-describedby="modal-description"
       >
-        <Box sx={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)' }}>
-          <Paper elevation={3} sx={{ padding: '2rem' }}>
-            <Typography variant="h6" id="modal-title">
+        <Box sx={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', width: 400 }}>
+          <Paper elevation={3} sx={{ padding: '2rem', position: 'relative' }}>
+            <Typography variant="h6" id="modal-title" gutterBottom>
               SQL Simulation
             </Typography>
-            <Typography variant="body2" id="modal-description">
+            <Typography variant="body2" id="modal-description" sx={{ marginBottom: '16px' }}>
               {sqlSimulation}
             </Typography>
+            <IconButton
+              onClick={handleCloseSqlModal}
+              sx={{ position: 'absolute', top: '8px', right: '8px' }}
+            >
+              <CloseIcon />
+            </IconButton>
+            <Button
+              startIcon={<ContentCopyIcon />}
+              variant="contained"
+              onClick={() => navigator.clipboard.writeText(sqlSimulation)}
+              sx={{ position: 'absolute', bottom: '16px', right: '16px' }}
+            >
+              Copy
+            </Button>
           </Paper>
         </Box>
       </Modal>
+
+      <Modal
+        open={isProgressModalOpen}
+        onClose={() => setIsProgressModalOpen(false)}
+        aria-labelledby="progress-modal-title"
+        aria-describedby="progress-modal-description"
+      >
+        <Box sx={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', width: 400, bgcolor: 'white', p: 4 }}>
+          <Typography id="progress-modal-title" variant="h6" component="h2">
+            Enviando regras...
+          </Typography>
+          <Box sx={{ width: '100%', my: 2 }}>
+            <LinearProgress variant="determinate" value={progress} />
+          </Box>
+          <Typography id="progress-modal-description" sx={{ mt: 2 }}>
+            {progress === 100 ? 'Regras enviadas com sucesso!' : `Enviando... ${progress}%`}
+          </Typography>
+        </Box>
+      </Modal>
+
+
     </>
   );
 };
