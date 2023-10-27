@@ -185,14 +185,33 @@ const RuleForm = () => {
           </Button>
 
           <Button
-                    color="info"
-                    type="submit"
-                    variant="contained"
-                    
-                    sx={{ display: 'block', margin: '0 auto' }}
-                  >
-                    {editingIndex === -1 ? 'Validate Rule' : 'Validate Rule'}
-                  </Button>
+             color="info"
+          type="submit"
+          variant="contained"
+          sx={{ display: 'block', margin: '0 auto' }}
+          onClick={() => {
+          alert(`table_name: "can_ecommerce_orders"
+          column_name: "abi_brand"
+          Operator: "LIKE"
+          Values: "%2021 BL LIFESTYLE APPAREL %"
+          Output_value: "'Bud Light - PIN'"`);
+            }}
+          >
+            {editingIndex === -1 ? 'Quicly TIP' : 'Quicly TIP'}
+          </Button>
+
+
+          <br />
+
+          <Button
+            color="warning"
+            type="submit"
+            variant="contained"
+
+            sx={{ display: 'block', margin: '0 auto' }}
+          >
+            {editingIndex === -1 ? 'Validate Rule' : 'Validate Rule'}
+          </Button>
 
           <br />
           <br />
@@ -210,6 +229,7 @@ const RuleForm = () => {
                     value={formData.user}
                     variant="outlined"
                   />
+
                   <FormControl fullWidth variant="outlined">
                     <InputLabel>ZONE</InputLabel>
                     <Select
@@ -227,6 +247,7 @@ const RuleForm = () => {
                       <MenuItem value={"APAC"}>APAC</MenuItem>
                     </Select>
                   </FormControl>
+
                   <FormControl fullWidth variant="outlined">
                     <InputLabel>Country</InputLabel>
                     <Select
@@ -262,14 +283,7 @@ const RuleForm = () => {
                       shrink: true,
                     }}
                   />
-                  {/* <Button
-                    color="inherit"
-                    type="submit"
-                    variant="contained"
-                    sx={{ display: 'block', margin: '0 auto' }}
-                  >
-                    {editingIndex === -1 ? 'Validate Rule' : 'Validate Rule'}
-                  </Button> */}
+
                   <Button
                     color="primary"
                     type="submit"
@@ -278,6 +292,7 @@ const RuleForm = () => {
                   >
                     {editingIndex === -1 ? 'ADD Rule' : 'Atualizar Regra'}
                   </Button>
+
                   <Button
                     color="inherit"
                     variant="contained"
@@ -286,6 +301,7 @@ const RuleForm = () => {
                   >
                     Clear All
                   </Button>
+
                   <Button
                     color="success"
                     variant="contained"
@@ -304,16 +320,58 @@ const RuleForm = () => {
 
                 </Stack>
               </Grid>
+
               <Grid item xs={12} sm={6}>
                 <Stack spacing={3}>
-                  <TextField
-                    fullWidth
-                    label="Collun Name"
-                    name="collunName"
-                    onChange={handleChange}
-                    value={formData.collunName}
-                    variant="outlined"
-                  />
+
+                  <FormControl fullWidth variant="outlined">
+                    <InputLabel>Collun Name</InputLabel>
+                    <Select
+                      label="Collun Name"
+                      name="collunName"
+                      onChange={handleChange}
+                      value={formData.collunName}
+                      variant="outlined"
+                    >
+                      <MenuItem value={"can_ecommerce_orders"}>can_ecommerce_orders</MenuItem>
+                      <MenuItem value={"can_file_uploads"}>can_file_uploads</MenuItem>
+                      <MenuItem value={"can_page_clicks"}>can_page_clicks</MenuItem>
+                      <MenuItem value={"can_page_views"}>can_page_views</MenuItem>
+                      <MenuItem value={"can_sfmc_customers"}>can_sfmc_customers</MenuItem>
+                      <MenuItem value={"can_wayin"}>can_wayin</MenuItem>
+                      <MenuItem value={"can_web_form"}>can_web_form</MenuItem>
+                      <MenuItem value={"can_fandom_app"}>can_fandom_app</MenuItem>
+                      <MenuItem value={"can_mobile_form"}>can_mobile_form</MenuItem>
+                      <MenuItem value={"can_sfsc_contacts"}>can_sfsc_contacts</MenuItem>
+                      <MenuItem value={"can_facebook_ads"}>can_facebook_ads</MenuItem>
+                      <MenuItem value={"can_additional_column_1"}>can_additional_column_1</MenuItem>
+                      <MenuItem value={"can_additional_column_2"}>can_additional_column_2</MenuItem>
+                    </Select>
+                  </FormControl>
+
+                  <FormControl fullWidth variant="outlined">
+                    <InputLabel>Logic</InputLabel>
+                    <Select
+                    label="Logic"
+                    name="logic"
+                      onChange={handleChange}
+                      value={formData.logic}
+                      variant="outlined"
+                    >
+                      <MenuItem value={"AND"}>AND</MenuItem>
+                      <MenuItem value={"OR"}>OR</MenuItem>
+                      <MenuItem value={"NOT"}>NOT</MenuItem>
+                      <MenuItem value={"BETWEEN"}>BETWEEN</MenuItem>
+                      <MenuItem value={"LIKE"}>LIKE</MenuItem>
+                      <MenuItem value={"IS NULL"}>IS NULL</MenuItem>
+                      <MenuItem value={"IS NOT NULL"}>IS NOT NULL</MenuItem>
+                      <MenuItem value={"EXISTS"}>EXISTS</MenuItem>
+                      <MenuItem value={"ALL"}>ALL</MenuItem>
+                      <MenuItem value={"ANY"}>ANY</MenuItem>
+                      <MenuItem value={"UNIQUE"}>UNIQUE</MenuItem>
+                    </Select>
+                  </FormControl>
+
                   <TextField
                     fullWidth
                     label="Operator"
@@ -322,6 +380,7 @@ const RuleForm = () => {
                     value={formData.operator}
                     variant="outlined"
                   />
+
                   <TextField
                     fullWidth
                     label="Values"
@@ -330,14 +389,16 @@ const RuleForm = () => {
                     value={formData.values}
                     variant="outlined"
                   />
-                  <TextField
+
+                  {/* { <TextField
                     fullWidth
                     label="Logic"
                     name="logic"
                     onChange={handleChange}
                     value={formData.logic}
                     variant="outlined"
-                  />
+                  /> } */}
+
                   <TextField
                     fullWidth
                     label="Output Value"
@@ -350,6 +411,7 @@ const RuleForm = () => {
               </Grid>
             </Grid>
           </form>
+
           <Box mt={10}>
             {submittedData.length > 0 && (
               <div>
