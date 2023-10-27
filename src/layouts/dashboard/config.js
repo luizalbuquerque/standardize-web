@@ -19,7 +19,7 @@ export const items = [
     )
   },
   {
-    title: 'Rules',
+    title: 'All Rules',
     path: '/customers',
     icon: (
       <SvgIcon fontSize="small">
@@ -28,7 +28,7 @@ export const items = [
     )
   },
   {
-    title: 'Standardize Advanced',
+    title: 'Standardize',
     path: '/rule-form',
     icon: (
       <SvgIcon fontSize="small">
@@ -36,15 +36,15 @@ export const items = [
       </SvgIcon>
     )
   },
-  {
-    title: 'Standardize Basic',
-    path: '/rule-form-basic',
-    icon: (
-      <SvgIcon fontSize="small">
-        <UsersIcon />
-      </SvgIcon>
-    )
-  },
+  // {
+  //   title: 'Standardize Basic',
+  //   path: '/rule-form-basic',
+  //   icon: (
+  //     <SvgIcon fontSize="small">
+  //       <UsersIcon />
+  //     </SvgIcon>
+  //   )
+  // },
   // {
   //   title: 'Companies',
   //   path: '/companies',
