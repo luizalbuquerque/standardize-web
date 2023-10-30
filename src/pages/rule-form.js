@@ -399,14 +399,14 @@ const RuleForm = () => {
                     variant="outlined"
                   /> } */}
 
-                  <TextField
+                  {/* <TextField
                     fullWidth
                     label="Output Value"
                     name="outputValue"
                     onChange={handleChange}
                     value={formData.outputValue}
                     variant="outlined"
-                  />
+                  /> */}
                 </Stack>
               </Grid>
             </Grid>
@@ -491,11 +491,13 @@ const RuleForm = () => {
         <Box sx={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', width: 400 }}>
           <Paper elevation={3} sx={{ padding: '2rem', position: 'relative' }}>
             <Typography variant="h6" id="modal-title" gutterBottom>
-              SQL Simulation
+              SQL Simulation - Copy and Test in TD 
             </Typography>
+            <br/>
             <Typography variant="body2" id="modal-description" sx={{ marginBottom: '16px' }}>
               {sqlSimulation}
             </Typography>
+            <br/>
             <IconButton
               onClick={handleCloseSqlModal}
               sx={{ position: 'absolute', top: '8px', right: '8px' }}
