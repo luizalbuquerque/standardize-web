@@ -13,32 +13,25 @@ import IconButton from '@mui/material/IconButton';
 import LinearProgress from '@mui/material/LinearProgress';
 
 
-
-
 const RuleForm = () => {
   const [formData, setFormData] = useState({
     user: 'ABI_user',
     zone: '',
     country: '',
     date: new Date().toISOString().slice(0, 10),
+    tableName: '',
     columnName: '',
     operator: '',
-    values: '',
-    columnNameOutput: '',
-    logic: 'AND',
+    conditionValues: '',
     outputValue: '',
-    collunName: '', // Novo campo 1
-    operator: '', // Novo campo 2
-    values: '', // Novo campo 3
-    logic: '', // Novo campo 4
-    outputValue: '' // Novo campo 5
+    priority: ''
   });
 
   const [submittedData, setSubmittedData] = useState([]);
   const [editingIndex, setEditingIndex] = useState(-1);
-  const [uniqueIdCounter, setUniqueIdCounter] = useState(1); // Contador para IDs únicos
-  const [sqlSimulation, setSqlSimulation] = useState(''); // Estado para armazenar a simulação SQL
-  const [isSqlModalOpen, setIsSqlModalOpen] = useState(false); // Estado para controlar a abertura/fechamento do modal
+  const [uniqueIdCounter, setUniqueIdCounter] = useState(1); 
+  const [sqlSimulation, setSqlSimulation] = useState(''); 
+  const [isSqlModalOpen, setIsSqlModalOpen] = useState(false);
   const [isProgressModalOpen, setIsProgressModalOpen] = useState(false);
   const [progress, setProgress] = useState(0);
 
@@ -80,17 +73,12 @@ const RuleForm = () => {
       zone: '',
       country: '',
       date: new Date().toISOString().slice(0, 10),
+      tableName: '',
       columnName: '',
       operator: '',
-      values: '',
-      columnNameOutput: '',
-      logic: 'AND',
+      conditionValues: '',
       outputValue: '',
-      collunName: '',
-      operator: '',
-      values: '',
-      logic: '',
-      outputValue: ''
+      priority: ''
     });
   };
 
@@ -100,7 +88,7 @@ const RuleForm = () => {
     if (editingIndex === -1) {
       const newRule = {
         ...formData,
-        id: uniqueIdCounter, // Definir um ID único
+        id: uniqueIdCounter,
       };
       setUniqueIdCounter(uniqueIdCounter + 1);
 
@@ -128,14 +116,21 @@ const RuleForm = () => {
     setSubmittedData(updatedData);
   };
 
-  const handleShowSQL = (index) => {
+const handleShowSQL = (index) => {
     if (index >= 0 && index < submittedData.length) {
       const data = submittedData[index];
-      const sql = `SELECT * FROM tabela WHERE user = '${data.user}' AND zone = '${data.zone}'`;
+      let sql = `
+        SELECT 
+            CASE 
+                WHEN ${data.columnName} ${data.operator} '${data.conditionValues}' THEN '${data.outputValue}'
+                ELSE ${data.columnName}
+            END AS NormalizedName
+        FROM your_table_name;
+      `;
       setSqlSimulation(sql);
       setIsSqlModalOpen(true);
     }
-  };
+};
 
   const handleCloseSqlModal = () => {
     setIsSqlModalOpen(false);
@@ -185,12 +180,12 @@ const RuleForm = () => {
           </Button>
 
           <Button
-             color="info"
-          type="submit"
-          variant="contained"
-          sx={{ display: 'block', margin: '0 auto' }}
-          onClick={() => {
-          alert(`table_name: "can_ecommerce_orders"
+            color="info"
+            type="submit"
+            variant="contained"
+            sx={{ display: 'block', margin: '0 auto' }}
+            onClick={() => {
+              alert(`table_name: "can_ecommerce_orders"
           column_name: "abi_brand"
           Operator: "LIKE"
           Values: "%2021 BL LIFESTYLE APPAREL %"
@@ -199,6 +194,7 @@ const RuleForm = () => {
           >
             {editingIndex === -1 ? 'Quicly TIP' : 'Quicly TIP'}
           </Button>
+
 
 
           <br />
@@ -324,89 +320,94 @@ const RuleForm = () => {
               <Grid item xs={12} sm={6}>
                 <Stack spacing={3}>
 
-                  <FormControl fullWidth variant="outlined">
-                    <InputLabel>Collun Name</InputLabel>
-                    <Select
-                      label="Collun Name"
-                      name="collunName"
-                      onChange={handleChange}
-                      value={formData.collunName}
-                      variant="outlined"
-                    >
-                      <MenuItem value={"can_ecommerce_orders"}>can_ecommerce_orders</MenuItem>
-                      <MenuItem value={"can_file_uploads"}>can_file_uploads</MenuItem>
-                      <MenuItem value={"can_page_clicks"}>can_page_clicks</MenuItem>
-                      <MenuItem value={"can_page_views"}>can_page_views</MenuItem>
-                      <MenuItem value={"can_sfmc_customers"}>can_sfmc_customers</MenuItem>
-                      <MenuItem value={"can_wayin"}>can_wayin</MenuItem>
-                      <MenuItem value={"can_web_form"}>can_web_form</MenuItem>
-                      <MenuItem value={"can_fandom_app"}>can_fandom_app</MenuItem>
-                      <MenuItem value={"can_mobile_form"}>can_mobile_form</MenuItem>
-                      <MenuItem value={"can_sfsc_contacts"}>can_sfsc_contacts</MenuItem>
-                      <MenuItem value={"can_facebook_ads"}>can_facebook_ads</MenuItem>
-                      <MenuItem value={"can_additional_column_1"}>can_additional_column_1</MenuItem>
-                      <MenuItem value={"can_additional_column_2"}>can_additional_column_2</MenuItem>
-                    </Select>
-                  </FormControl>
+                  <form>
+                    <Grid container spacing={3}>
+                      <Grid item xs={12} md={6}>
+                        <Stack spacing={3}>
 
-                  <FormControl fullWidth variant="outlined">
-                    <InputLabel>Logic</InputLabel>
-                    <Select
-                    label="Logic"
-                    name="logic"
-                      onChange={handleChange}
-                      value={formData.logic}
-                      variant="outlined"
-                    >
-                      <MenuItem value={"AND"}>AND</MenuItem>
-                      <MenuItem value={"OR"}>OR</MenuItem>
-                      <MenuItem value={"NOT"}>NOT</MenuItem>
-                      <MenuItem value={"BETWEEN"}>BETWEEN</MenuItem>
-                      <MenuItem value={"LIKE"}>LIKE</MenuItem>
-                      <MenuItem value={"IS NULL"}>IS NULL</MenuItem>
-                      <MenuItem value={"IS NOT NULL"}>IS NOT NULL</MenuItem>
-                      <MenuItem value={"EXISTS"}>EXISTS</MenuItem>
-                      <MenuItem value={"ALL"}>ALL</MenuItem>
-                      <MenuItem value={"ANY"}>ANY</MenuItem>
-                      <MenuItem value={"UNIQUE"}>UNIQUE</MenuItem>
-                    </Select>
-                  </FormControl>
+                          <FormControl fullWidth variant="outlined">
+                            <InputLabel>Table Name</InputLabel>
+                            <Select
+                              label="Table Name"
+                              name="tableName"
+                              onChange={handleChange}
+                              value={formData.tableName}
+                              variant="outlined"
+                            >
+                              <MenuItem value={"can_ecommerce_orders"}>can_ecommerce_orders</MenuItem>
+                              <MenuItem value={"can_file_uploads"}>can_file_uploads</MenuItem>
+                              <MenuItem value={"can_page_clicks"}>can_page_clicks</MenuItem>
+                              <MenuItem value={"can_page_views"}>can_page_views</MenuItem>
+                              <MenuItem value={"can_sfmc_customers"}>can_sfmc_customers</MenuItem>
+                              <MenuItem value={"can_wayin"}>can_wayin</MenuItem>
+                              <MenuItem value={"can_web_form"}>can_web_form</MenuItem>
+                              <MenuItem value={"can_fandom_app"}>can_fandom_app</MenuItem>
+                              <MenuItem value={"can_mobile_form"}>can_mobile_form</MenuItem>
+                              <MenuItem value={"can_sfsc_contacts"}>can_sfsc_contacts</MenuItem>
+                              <MenuItem value={"can_facebook_ads"}>can_facebook_ads</MenuItem>
+                              <MenuItem value={"can_additional_column_1"}>can_additional_column_1</MenuItem>
+                              <MenuItem value={"can_additional_column_2"}>can_additional_column_2</MenuItem>
+                            </Select>
+                          </FormControl>
 
-                  <TextField
-                    fullWidth
-                    label="Operator"
-                    name="operator"
-                    onChange={handleChange}
-                    value={formData.operator}
-                    variant="outlined"
-                  />
+                          <FormControl fullWidth variant="outlined">
+                            <InputLabel>Collun_Name</InputLabel>
+                            <Select
+                              label="Collun Name"
+                              name="columnName"
+                              onChange={handleChange}
+                              value={formData.columnName}
+                              variant="outlined"
+                            >
+                              <MenuItem value={"abi_brand"}>abi_brand</MenuItem>
+                              <MenuItem value={"abi_province"}>abi_province</MenuItem>
+                              <MenuItem value={"abi_interests"}>abi_interests</MenuItem>
+                              <MenuItem value={"abi_campaign"}>abi_campaign</MenuItem>
+                            </Select>
+                          </FormControl>
 
-                  <TextField
-                    fullWidth
-                    label="Values"
-                    name="values"
-                    onChange={handleChange}
-                    value={formData.values}
-                    variant="outlined"
-                  />
+                          <TextField
+                            fullWidth
+                            label="Operator"
+                            name="operator"
+                            onChange={handleChange}
+                            value={formData.operator}
+                            variant="outlined"
+                          />
 
-                  {/* { <TextField
-                    fullWidth
-                    label="Logic"
-                    name="logic"
-                    onChange={handleChange}
-                    value={formData.logic}
-                    variant="outlined"
-                  /> } */}
+                          <TextField
+                            fullWidth
+                            label="Condition Value"
+                            name="conditionValues"
+                            onChange={handleChange}
+                            value={formData.conditionValues}
+                            variant="outlined"
+                          />
 
-                  {/* <TextField
-                    fullWidth
-                    label="Output Value"
-                    name="outputValue"
-                    onChange={handleChange}
-                    value={formData.outputValue}
-                    variant="outlined"
-                  /> */}
+                          <TextField
+                            fullWidth
+                            label="Output Value"
+                            name="outputValue"
+                            onChange={handleChange}
+                            value={formData.outputValue}
+                            variant="outlined"
+                          />
+
+                          <TextField
+                            fullWidth
+                            label="Priority (optional)"
+                            name="priority"
+                            onChange={handleChange}
+                            value={formData.priority}
+                            variant="outlined"
+                            type="number"
+                          />
+
+                        </Stack>
+                      </Grid>
+                    </Grid>
+                  </form>
+
                 </Stack>
               </Grid>
             </Grid>
@@ -425,11 +426,12 @@ const RuleForm = () => {
                         <TableCell>Zone</TableCell>
                         <TableCell>Country</TableCell>
                         <TableCell>Created At</TableCell>
-                        <TableCell>Collun_Name</TableCell>
+                        <TableCell>Table Name</TableCell>
+                        <TableCell>Collun Name</TableCell>
                         <TableCell>Operator</TableCell>
-                        <TableCell>Values</TableCell>
-                        <TableCell>Logic</TableCell>
+                        <TableCell>Condition Values</TableCell>
                         <TableCell>Output Value</TableCell>
+                        <TableCell>Priority</TableCell>
                         <TableCell>Actions</TableCell>
                       </TableRow>
                     </TableHead>
@@ -441,11 +443,12 @@ const RuleForm = () => {
                           <TableCell>{data.zone}</TableCell>
                           <TableCell>{data.country}</TableCell>
                           <TableCell>{data.date}</TableCell>
-                          <TableCell>{data.collunName}</TableCell>
+                          <TableCell>{data.tableName}</TableCell>
+                          <TableCell>{data.columnName}</TableCell>
                           <TableCell>{data.operator}</TableCell>
-                          <TableCell>{data.values}</TableCell>
-                          <TableCell>{data.logic}</TableCell>
+                          <TableCell>{data.conditionValues}</TableCell>
                           <TableCell>{data.outputValue}</TableCell>
+                          <TableCell>{data.priority}</TableCell>
                           <TableCell>
                             <Stack direction="row" spacing={1}>
                               <Button
@@ -491,13 +494,13 @@ const RuleForm = () => {
         <Box sx={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', width: 400 }}>
           <Paper elevation={3} sx={{ padding: '2rem', position: 'relative' }}>
             <Typography variant="h6" id="modal-title" gutterBottom>
-              SQL Simulation - Copy and Test in TD 
+              SQL Simulation - Copy and Test in TD
             </Typography>
-            <br/>
+            <br />
             <Typography variant="body2" id="modal-description" sx={{ marginBottom: '16px' }}>
               {sqlSimulation}
             </Typography>
-            <br/>
+            <br />
             <IconButton
               onClick={handleCloseSqlModal}
               sx={{ position: 'absolute', top: '8px', right: '8px' }}

@@ -1,5 +1,5 @@
-import React, { useRef } from 'react';
-import { Button, Stack, Tooltip } from '@mui/material';
+import React, { useRef, useState } from 'react';
+import { Button, Stack, Tooltip, Modal, Typography, Box } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import PublishIcon from '@mui/icons-material/Publish';
 
@@ -13,78 +13,69 @@ function RuleFormButtons({
   handleValidateRule,
 }) {
   const fileInputRef = useRef(null);
+  const [isTipModalOpen, setTipModalOpen] = useState(false);
 
   const handleImportClick = () => {
     fileInputRef.current.click();
   };
 
+  const handleOpenTipModal = () => {
+    setTipModalOpen(true);
+  };
+
+  const handleCloseTipModal = () => {
+    setTipModalOpen(false);
+  };
+
   return (
     <Stack spacing={2} sx={{ width: '100%' }}>
-      <Button
-        startIcon={<AddIcon />}
-        type="submit"
-        variant="contained"
-        color="primary"
-        sx={{ display: 'block', margin: '0 auto' }}
-        onClick={handleSubmit}
-      >
-        {editingIndex === -1 ? 'ADD Rule' : 'Atualizar Regra'}
-      </Button>
-
-      <Button
-        startIcon={<PublishIcon />}
-        variant="contained"
-        color="info"
-        onClick={handleImportClick}
-        sx={{ display: 'block', margin: '0 auto' }}
-      >
-        Import
-      </Button>
-      <input
-        type="file"
-        accept=".csv, .txt"
-        onChange={handleFileUpload}
-        style={{ display: 'none' }}
-        ref={fileInputRef}
-      />
-
-      <Button
-        variant="contained"
-        color="inherit"
-        onClick={clearFields}
-        sx={{ display: 'block', margin: '0 auto' }}
-      >
-        Clear All
-      </Button>
-
-      <Button
-        variant="contained"
-        color="success"
-        onClick={handleSaveRules}
-        sx={{ display: 'block', margin: '0 auto' }}
-      >
-        Save all Rules
-      </Button>
+      {/* ... rest of your buttons ... */}
 
       <Tooltip title="Quick Tips">
         <Button
           variant="outlined"
           color="secondary"
-          onClick={handleQuickTip}
+          onClick={handleOpenTipModal}
           sx={{ display: 'block', margin: '0 auto' }}
         >
           Quick Tips
         </Button>
       </Tooltip>
 
-      <Button
-        variant="contained"
-        color="warning"
-        onClick={handleValidateRule}
-        sx={{ display: 'block', margin: '0 auto' }}
+      {/* ... rest of your buttons ... */}
+
+      <Modal
+        open={isTipModalOpen}
+        onClose={handleCloseTipModal}
+        aria-labelledby="simple-modal-title"
+        aria-describedby="simple-modal-description"
       >
-        Validate Rule
-      </Button>
+        <Box
+          sx={{
+            position: 'absolute',
+            top: '50%',
+            left: '50%',
+            transform: 'translate(-50%, -50%)',
+            bgcolor: 'background.paper',
+            border: '2px solid #000',
+            boxShadow: 24,
+            p: 4,
+          }}
+        >
+          <Typography id="simple-modal-title" variant="h6" component="h2">
+            Dica Rápida
+          </Typography>
+          <Typography id="simple-modal-description" sx={{ mt: 2 }}>
+            column_name: "abi_campaign"
+            <br />
+            Operator: "LIKE"
+            <br />
+            Values: "%Michelob Ultra Exercise Bike%"
+            <br />
+            Output_value: "MICHELOB ULTRA EXERCISE BIKE"
+          </Typography>
+        </Box>
+      </Modal>
     </Stack>
   );
 }
