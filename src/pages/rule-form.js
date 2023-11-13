@@ -116,21 +116,42 @@ const RuleForm = () => {
     setSubmittedData(updatedData);
   };
 
+// const handleShowSQL = (index) => {
+//     if (index >= 0 && index < submittedData.length) {
+//       const data = submittedData[index];
+//       let sql = `
+//         SELECT 
+//             CASE 
+//                 WHEN ${data.columnName} ${data.operator} '${data.conditionValues}' THEN '${data.outputValue}'
+//                 ELSE ${data.columnName}
+//             END AS NormalizedName
+//         FROM your_table_name;
+//       `;
+//       setSqlSimulation(sql);
+//       setIsSqlModalOpen(true);
+//     }
+// };
+
 const handleShowSQL = (index) => {
-    if (index >= 0 && index < submittedData.length) {
-      const data = submittedData[index];
-      let sql = `
-        SELECT 
-            CASE 
-                WHEN ${data.columnName} ${data.operator} '${data.conditionValues}' THEN '${data.outputValue}'
-                ELSE ${data.columnName}
-            END AS NormalizedName
-        FROM your_table_name;
-      `;
-      setSqlSimulation(sql);
-      setIsSqlModalOpen(true);
-    }
+  if (index >= 0 && index < submittedData.length) {
+    const data = submittedData[index];
+    let sql = `
+      SELECT
+        ${data.columnName},
+        CASE
+          WHEN ${data.condition} THEN '${data.outputValue}'
+          ELSE ${data.columnName}
+        END as Normalized${data.columnName},
+        -- Substitua 'other_columns' com as outras colunas que você quer selecionar ou use '*' para todas as outras
+        *
+      FROM
+        ${data.tableName};
+    `;
+    setSqlSimulation(sql);
+    setIsSqlModalOpen(true);
+  }
 };
+
 
   const handleCloseSqlModal = () => {
     setIsSqlModalOpen(false);
