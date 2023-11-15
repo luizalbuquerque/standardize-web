@@ -3,7 +3,7 @@
   "version": "3.0.0",
   "author": "",
   "licence": "MIT",
-  "homepage": "./",
+  "homepage": "",
   "private": false,
   "scripts": {
     "dev": "next",
